@@ -239,6 +239,7 @@ class BuddyForms_Members_Extention extends BP_Component {
 					}
 
 					if ( $buddyforms_members_parent_setup_nav ) {
+						$this->main_nav=array();
 						parent::setup_nav( $main_nav, $sub_nav );
 					} else {
 						foreach ( $sub_nav as $nav ) {
@@ -257,26 +258,31 @@ class BuddyForms_Members_Extention extends BP_Component {
 	 * @since 0.1 beta
 	 */
 	function get_user_posts_count( $user_id, $post_type, $form_slug ) {
-		global $buddyforms;
-
-		$args['author']         = $user_id;
-		$args['post_type']      = $post_type;
-		$args['fields']         = 'ids';
-		$args['posts_per_page'] = - 1;
-
+		global $buddyforms,$wpdb;
+		$meta_key = '_bf_form_slug';
+		$args = "
+			SELECT COUNT(*)
+			FROM $wpdb->posts p
+			WHERE p.post_author = %d
+			AND p.post_status NOT IN ('trash', 'auto-draft')
+			AND p.post_type = 'post'
+		";
 		if ( isset( $buddyforms[ $form_slug ]['list_posts_option'] ) && $buddyforms[ $form_slug ]['list_posts_option'] == 'list_all_form' ) {
-			$args['meta_key']   = '_bf_form_slug';
-			$args['meta_value'] = $form_slug;
+			$args_extended = $args . "
+				AND EXISTS (
+					SELECT 1
+					FROM $wpdb->postmeta pm
+					WHERE pm.post_id = p.ID
+					AND pm.meta_key = %s
+					AND pm.meta_value = %s
+				)
+			";
+			$query = $wpdb->prepare( $args_extended, $user_id, $meta_key, $form_slug );
+		} else{
+			$query = $wpdb->prepare( $args, $user_id );
 		}
 
-		$post_status_array = buddyforms_get_post_status_array();
-
-		unset( $post_status_array['trash'] );
-
-		$args['post_status'] = array_keys( $post_status_array );
-
-		return count( get_posts( $args ) );
-
+		return (int) $wpdb->get_var( $query );
 	}
 
 	/**

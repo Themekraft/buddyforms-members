@@ -2,8 +2,8 @@
 Contributors: svenl77, themekraft, buddyforms, gfirem
 Tags: buddypress, buddyboss, buddypress registration, member forms, buddypress profile
 Requires at least: 3.9
-Tested up to: 6.4.2
-Stable tag: 1.5.6
+Tested up to: 6.6.1
+Stable tag: 1.5.7
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -98,6 +98,11 @@ Yes, you can use ACF, Pods fields, and many others using our Extensions.
 5. **Backend Overview** - The backend overview of your existing forms.
 
 == Changelog ==
+= 1.5.7 - 04 Sep 2024 =
+* Fixed issue with member profile in block themes.
+* Fixed issue with BuddyPress 14.0.0 and multiple profile forms.
+* Tested up to WordPress 6.6.1
+
 = 1.5.6 - 26 Dec 2023 =
 * Updated Freemius SDK
 * Fixed syntax issue.
