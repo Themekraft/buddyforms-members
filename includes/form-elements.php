@@ -1,4 +1,8 @@
 <?php
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 function buddyforms_members_admin_settings_sidebar_metabox() {
 	add_meta_box( 'buddyforms_members', __( 'BP Member Profiles', 'buddyforms-members' ), 'buddyforms_members_admin_settings_sidebar_metabox_html', 'buddyforms', 'normal', 'low' );
 	add_filter( 'postbox_classes_buddyforms_buddyforms_members', 'buddyforms_metabox_class' );
@@ -919,7 +923,7 @@ function buddyforms_members_edit_field_html( $form_slug, $field ) {
 
 		if ( strpos( $label, '(required)' ) !== false ) {
 			$tmp   = str_replace( '<input', '<input required "', $tmp );
-			$label = str_replace( '(required)', '', strip_tags( $label ) );
+			$label = str_replace( '(required)', '', wp_strip_all_tags( $label ) );
 			$label = '* ' . $label;
 		}
 		$tmp = str_replace( '<input', '<input placeholder="' . $label . '"', $tmp );
@@ -986,7 +990,7 @@ function buddyforms_members_process_submission_end( $args ) {
 					switch ( $xfield->type ) {
 
 						case 'datebox':
-							$date = isset( $_POST[ $field['slug'] ] ) ? date( 'Y-m-d H:i:s', strtotime( sanitize_text_field( wp_unslash( $_POST[ $field['slug'] ] ) ) ) ) : '';
+							$date = isset( $_POST[ $field['slug'] ] ) ? gmdate( 'Y-m-d H:i:s', strtotime( sanitize_text_field( wp_unslash( $_POST[ $field['slug'] ] ) ) ) ) : '';
 							if ( ! empty( $date ) ) {
 								xprofile_set_field_data( $field['mapped_xprofile_field'], $user_id, $date );
 							}

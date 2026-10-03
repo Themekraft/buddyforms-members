@@ -1,3 +1,4 @@
+<?php defined( 'ABSPATH' ) || exit; ?>
 <div id="item-body">
 	<?php
 	global $bp, $buddyforms, $buddyforms_member_tabs;

@@ -1,14 +1,19 @@
 <?php
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 /**
  * Plugin Name: BuddyForms Members
  * Plugin URI: http://buddyforms.com/downloads/buddyforms-members/
  * Description: The BuddyForms Members Component. Let your members write right out of their profiles.
  * Version: 1.5.7
+ * Requires at least: 5.9
+ * Requires PHP: 7.4
  * Author: ThemeKraft
  * Author URI: https://themekraft.com/buddyforms/
  * License: GPLv2 or later
- * Network: false
  * Text Domain: buddyforms-members
  * Domain Path: /languages
  * Svn: buddyforms-members

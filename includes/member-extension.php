@@ -1,5 +1,9 @@
 <?php
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 class BuddyForms_Members_Extention extends BP_Component {
 
 	public $id = 'buddyforms';
@@ -153,7 +157,7 @@ class BuddyForms_Members_Extention extends BP_Component {
 
 							$main_nav['default_subnav_slug'] = $key . '-create';
 							$sub_nav[]                       = array(
-								'name'            => sprintf( __( ' Contact with %s', 'buddyforms-members' ), bp_get_displayed_user_fullname() ),
+								'name'            => sprintf( /* translators: %s: displayed member's full name. */ __( ' Contact with %s', 'buddyforms-members' ), bp_get_displayed_user_fullname() ),
 								'slug'            => $key . '-create',
 								'parent_slug'     => $parent_tab,
 								'parent_url'      => trailingslashit( bp_displayed_user_domain() . $parent_tab ),
@@ -180,7 +184,7 @@ class BuddyForms_Members_Extention extends BP_Component {
 							$position ++;
 
 							$sub_nav[] = array(
-								'name'            => sprintf( __( ' Add %s', 'buddyforms-members' ), $singular_name ),
+								'name'            => sprintf( /* translators: %s: singular name of the form's post type. */ __( ' Add %s', 'buddyforms-members' ), $singular_name ),
 								'slug'            => $key . '-create',
 								'parent_slug'     => $parent_tab,
 								'parent_url'      => trailingslashit( bp_displayed_user_domain() . $parent_tab ),
@@ -193,7 +197,7 @@ class BuddyForms_Members_Extention extends BP_Component {
 							$position ++;
 
 							$sub_nav[] = array(
-								'name'            => sprintf( __( ' Edit %s', 'buddyforms-members' ), $singular_name ),
+								'name'            => sprintf( /* translators: %s: singular name of the form's post type. */ __( ' Edit %s', 'buddyforms-members' ), $singular_name ),
 								'slug'            => $key . '-edit',
 								'parent_slug'     => $parent_tab,
 								'parent_url'      => trailingslashit( bp_displayed_user_domain() . $parent_tab ),
@@ -206,7 +210,7 @@ class BuddyForms_Members_Extention extends BP_Component {
 							$position ++;
 
 							$sub_nav[] = array(
-								'name'            => sprintf( __( ' Revision %s', 'buddyforms-members' ), $singular_name ),
+								'name'            => sprintf( /* translators: %s: singular name of the form's post type. */ __( ' Revision %s', 'buddyforms-members' ), $singular_name ),
 								'slug'            => $key . '-revision',
 								'parent_slug'     => $parent_tab,
 								'parent_url'      => trailingslashit( bp_loggedin_user_domain() . $parent_tab ),
@@ -219,7 +223,7 @@ class BuddyForms_Members_Extention extends BP_Component {
 							$position ++;
 
 							$sub_nav[] = array(
-								'name'            => sprintf( __( ' Page %s', 'buddyforms-members' ), $singular_name ),
+								'name'            => sprintf( /* translators: %s: singular name of the form's post type. */ __( ' Page %s', 'buddyforms-members' ), $singular_name ),
 								'slug'            => $key . '-page',
 								'parent_slug'     => $parent_tab,
 								'parent_url'      => trailingslashit( bp_loggedin_user_domain() . $parent_tab ),
