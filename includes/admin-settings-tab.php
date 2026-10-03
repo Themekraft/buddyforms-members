@@ -38,7 +38,7 @@ function buddyforms_buddypress_settings_page_tab( $tab ) {
 						<tbody>
 						<tr>
 							<th colspan="2">
-								<h3><span><?php esc_html_e( 'Overwrite the BuddyPress Edit Profile Form', 'buddyforms' ); ?></span></h3>
+								<h3><span><?php esc_html_e( 'Overwrite the BuddyPress Edit Profile Form', 'buddyforms-members' ); ?></span></h3>
 							</th>
 						</tr>
 						<tr valign="top">

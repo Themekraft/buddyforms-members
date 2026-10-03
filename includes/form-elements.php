@@ -84,7 +84,7 @@ function buddyforms_members_admin_settings_sidebar_metabox_html() {
 			array( 'bp_profile_member_message' => 'Integrate this form as a member contact form' ),
 			array(
 				'value'     => $bp_profile_member_message,
-				'shortDesc' => __( 'Visibility: This tab is only visible in other user profiles. You will not see it in your profile. It is visible to your profile visitors only. A new send to option is added to the notifications. Please make sure you have at least one notification send to the member.' ),
+				'shortDesc' => __( 'Visibility: This tab is only visible in other user profiles. You will not see it in your profile. It is visible to your profile visitors only. A new send to option is added to the notifications. Please make sure you have at least one notification send to the member.', 'buddyforms-members' ),
 			)
 		);
 	}
@@ -106,7 +106,7 @@ function buddyforms_members_admin_settings_sidebar_metabox_html() {
 
 	if( $bp_activity_stream == true ){
 		$form_setup[] = new Element_Textbox(
-			'<b>' . __( 'Activity Stream action message', 'buddyforms' ) . '</b>',
+			'<b>' . __( 'Activity Stream action message', 'buddyforms-members' ) . '</b>',
 			'buddyforms_options[bp_activity_stream_title]',
 			array(
 				'rows'  => 3,
@@ -119,7 +119,7 @@ function buddyforms_members_admin_settings_sidebar_metabox_html() {
 	}
 	if( $bp_activity_stream == true ){
 		$form_setup[] = new Element_Textarea(
-			'<b>' . __( 'Activity Stream custom message', 'buddyforms' ) . '</b>',
+			'<b>' . __( 'Activity Stream custom message', 'buddyforms-members' ) . '</b>',
 			'buddyforms_options[bp_activity_stream_content]',
 			array(
 				'rows'  => 3,
@@ -453,7 +453,7 @@ endif;
 				array(
 					'data'      => $field_id,
 					'value'     => $placeholder,
-					'shortDesc' => __( 'You can change the placeholder to something meaningful like Select a Category or what make sense for your taxonomy.' ),
+					'shortDesc' => __( 'You can change the placeholder to something meaningful like Select a Category or what make sense for your taxonomy.', 'buddyforms-members' ),
 				)
 			);
 
@@ -475,7 +475,7 @@ endif;
 				array(
 					'data'      => $field_id,
 					'value'     => $tmaximumSelectionLength,
-					'shortDesc' => __( 'Add a number to limit the Selection amount' ),
+					'shortDesc' => __( 'Add a number to limit the Selection amount', 'buddyforms-members' ),
 				)
 			);
 

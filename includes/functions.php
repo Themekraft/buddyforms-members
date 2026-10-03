@@ -47,7 +47,7 @@ function buddyforms_members_wp_before_admin_bar_render() {
 						array(
 							'parent' => 'my-account-buddypress',
 							'id'     => 'my-account-buddypress-' . $key,
-							'title'  => __( $name, 'buddypress' ),
+							'title'  => __( $name, 'buddyforms-members' ),
 							'href'   => trailingslashit( bp_loggedin_user_domain() . $slug ),
 						)
 					);
@@ -230,7 +230,7 @@ function buddyforms_notification_send_mail_to_member_option( $mail_to_options, $
 		return $mail_to_options;
 	}
 
-	$mail_to_options['member'] = __( 'Member - send to displayed member', 'buddyforms' );
+	$mail_to_options['member'] = __( 'Member - send to displayed member', 'buddyforms-members' );
 
 	return $mail_to_options;
 }
@@ -263,7 +263,7 @@ function buddyforms_check_send_message_to_member_conditions() {
 	}
 
 	if ( ! in_array( 'member', $mail_to ) ) {
-		$messages[] = __( 'At least one Mail Notification must have selected Send mail to Member.', 'buddyforms' );
+		$messages[] = __( 'At least one Mail Notification must have selected Send mail to Member.', 'buddyforms-members' );
 	}
 
 	if ( ! empty( $messages ) ) {
