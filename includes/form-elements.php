@@ -356,15 +356,17 @@ endif;
 
 				// Let's add an script to handled the update of xprofile field selector
 
-				$script = "<script>
+				$js_field_id = esc_js( $field_id );
+
+				$script = "
 					jQuery(function() {
-						const \$xprofile_group = jQuery('[name=\'buddyforms_options[form_fields][" . $field_id . "][xprofile_group]\']');
+						const \$xprofile_group = jQuery('[name=\'buddyforms_options[form_fields][" . $js_field_id . "][xprofile_group]\']');
 
 						const ajaxReq = function(){
 
 							debugger;
 
-							const \$xprofile_field = jQuery('[name=\'buddyforms_options[form_fields][" . $field_id . "][xprofile_field]\']');
+							const \$xprofile_field = jQuery('[name=\'buddyforms_options[form_fields][" . $js_field_id . "][xprofile_field]\']');
 							const selected_group_id = \$xprofile_group.val();
 
 							// Let's disabled the event & input
@@ -420,9 +422,9 @@ endif;
 						\$xprofile_group.off('change').change(ajaxReq);
 
 					});
-				</script>";
+				";
 
-				echo $script;
+				wp_print_inline_script_tag( $script );
 
 			} else {
 				$form_fields['general']['notice'] = new Element_HTML( __( 'You need to enable BuddyPress Groups to use this form element', 'buddyforms-members' ) );
