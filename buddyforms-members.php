@@ -108,7 +108,6 @@ class BuddyForms_Members {
 		require_once BUDDYFORMS_MEMBERS_INCLUDES_PATH . 'member-extension.php';
 		require_once BUDDYFORMS_MEMBERS_INCLUDES_PATH . 'redirect.php';
 		require_once BUDDYFORMS_MEMBERS_INCLUDES_PATH . 'admin-settings-tab.php';
-		require_once BUDDYFORMS_MEMBERS_INCLUDES_PATH . 'resources/tgm/class-tgm-plugin-activation.php';
 
 		if ( ! class_exists( 'BP_Theme_Compat' ) ) {
 			require_once BUDDYFORMS_MEMBERS_INCLUDES_PATH . 'bp-backwards-compatibililty-functions.php';
@@ -134,27 +133,6 @@ class BuddyForms_Members {
 		global $bp;
 
 		$bp->buddyforms = new BuddyForms_Members_Extention();
-	}
-
-	function buddyforms_members_register_required_plugins() {
-		$plugins                   = array(
-			array(
-				'name'         => 'BuddyForms',
-				'slug'         => 'buddyforms',
-				'required'     => true,
-				'is_automatic' => true,
-			),
-		);
-		$is_buddyboss_theme_active = buddyforms_members_is_buddyboss_theme_active();
-		if ( ! $is_buddyboss_theme_active ) {
-			$plugins[] = array(
-				'name'         => 'BuddyPress',
-				'slug'         => 'buddypress',
-				'required'     => true,
-				'is_automatic' => true,
-			);
-		}
-		tgmpa( $plugins );
 	}
 
 }

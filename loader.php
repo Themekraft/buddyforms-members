@@ -11,6 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Version: 1.5.7
  * Requires at least: 5.9
  * Requires PHP: 7.4
+ * Requires Plugins: buddyforms
  * Author: ThemeKraft
  * Author URI: https://themekraft.com/buddyforms/
  * License: GPLv2 or later
@@ -37,76 +38,24 @@ if ( ! defined( 'ABSPATH' ) ) {
  * ***************************************************************************
  */
 
-function buddyforms_members_is_buddyboss_theme_active() {
-	$theme = wp_get_theme();
-
-	// gets the current theme
-	return 'BuddyBoss Theme' === $theme->name || 'BuddyBoss Theme' === $theme->parent_theme;
-}
-
-//
-// Check the plugin dependencies
-//
-add_action(
-	'init',
-	function () {
-
-		// Only Check for requirements in the admin
-		if ( ! is_admin() ) {
-			return;
+if ( ! function_exists( 'buddyforms_addon_plugin_dependencies_slug' ) ) {
+	/**
+	 * Let the running BuddyForms copy (free or premium) satisfy "Requires Plugins: buddyforms".
+	 *
+	 * @param string $slug Dependency slug.
+	 *
+	 * @return string
+	 */
+	function buddyforms_addon_plugin_dependencies_slug( $slug ) {
+		if ( 'buddyforms' === $slug && defined( 'BUDDYFORMS_INSTALL_PATH' ) ) {
+			return basename( BUDDYFORMS_INSTALL_PATH );
 		}
 
-		// Require TGM
-		require dirname( __FILE__ ) . '/includes/resources/tgm/class-tgm-plugin-activation.php';
+		return $slug;
+	}
 
-		// Hook required plugins function to the tgmpa_register action
-		add_action(
-			'buddyforms_members_tgmpa_register',
-			function () {
-				$plugins                   = array();
-				$is_buddyboss_theme_active = buddyforms_members_is_buddyboss_theme_active();
-				if ( ! $is_buddyboss_theme_active ) {
-					// Create the required plugins array
-					$plugins['buddypress'] = array(
-						'name'     => 'BuddyPress',
-						'slug'     => 'buddypress',
-						'required' => true,
-					);
-				}
-
-				if ( ! defined( 'BUDDYFORMS_PRO_VERSION' ) ) {
-					$plugins['buddyforms'] = array(
-						'name'     => 'BuddyForms',
-						'slug'     => 'buddyforms',
-						'required' => true,
-						'version'  => '2.6.1',
-					);
-				}
-
-				$config = array(
-					'id'           => 'buddyforms_members',
-					// Unique ID for hashing notices for multiple instances of TGMPA.
-					'parent_slug'  => 'plugins.php',
-					// Parent menu slug.
-					'capability'   => 'manage_options',
-					// Capability needed to view plugin install page, should be a capability associated with the parent menu used.
-					'has_notices'  => true,
-					// Show admin notices or not.
-					'dismissable'  => false,
-					// If false, a user cannot dismiss the nag message.
-					'is_automatic' => true,
-				// Automatically activate plugins after installation or not.
-				);
-
-				// Call the tgmpa function to register the required plugins
-				buddyforms_members_tgmpa( $plugins, $config );
-
-			}
-		);
-	},
-	1,
-	1
-);
+	add_filter( 'wp_plugin_dependencies_slug', 'buddyforms_addon_plugin_dependencies_slug' );
+}
 
 // BuddyForms Members init
 add_action( 'bp_loaded', 'buddyforms_members_init' );
