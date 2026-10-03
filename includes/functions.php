@@ -51,7 +51,7 @@ function buddyforms_members_wp_before_admin_bar_render() {
 						array(
 							'parent' => 'my-account-buddypress',
 							'id'     => 'my-account-buddypress-' . $key,
-							'title'  => __( $name, 'buddyforms-members' ),
+							'title'  => esc_html( $name ),
 							'href'   => trailingslashit( bp_loggedin_user_domain() . $slug ),
 						)
 					);
@@ -156,7 +156,7 @@ function buddyforms_members_button_view_posts( $button, $args ) {
 		shortcode_atts(
 			array(
 				'form_slug' => '',
-				'label'     => 'View',
+				'label'     => __( 'View', 'buddyforms-members' ),
 			),
 			$args
 		)
@@ -164,7 +164,7 @@ function buddyforms_members_button_view_posts( $button, $args ) {
 
 	if ( isset( $buddyforms[ $form_slug ]['profiles_integration'] ) ) {
 		$url    = trailingslashit( bp_loggedin_user_domain() );
-		$button = '<a class="button" href="' . $url . $form_slug . '/">' . __( $label, 'buddyforms-members' ) . ' </a>';
+		$button = '<a class="button" href="' . esc_url( $url . $form_slug . '/' ) . '">' . esc_html( $label ) . ' </a>';
 	}
 
 	return $button;
@@ -178,7 +178,7 @@ function buddyforms_members_button_add_new( $button, $args ) {
 		shortcode_atts(
 			array(
 				'form_slug' => '',
-				'label'     => 'Add New',
+				'label'     => __( 'Add New', 'buddyforms-members' ),
 			),
 			$args
 		)
@@ -186,7 +186,7 @@ function buddyforms_members_button_add_new( $button, $args ) {
 
 	if ( isset( $buddyforms[ $form_slug ]['profiles_integration'] ) ) {
 		$url    = trailingslashit( bp_loggedin_user_domain() );
-		$button = '<a class="button" href="' . $url . $form_slug . '/create/">' . __( $label, 'buddyforms-members' ) . '</a>';
+		$button = '<a class="button" href="' . esc_url( $url . $form_slug . '/create/' ) . '">' . esc_html( $label ) . '</a>';
 	}
 
 	return $button;
