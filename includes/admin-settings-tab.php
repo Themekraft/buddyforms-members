@@ -1,5 +1,9 @@
 <?php
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 add_filter( 'buddyforms_admin_tabs', 'buddyforms_buddypress_admin_tab', 1, 1 );
 function buddyforms_buddypress_admin_tab( $tabs ) {
 	$tabs['buddypress'] = 'BuddyPress';
@@ -38,7 +42,7 @@ function buddyforms_buddypress_settings_page_tab( $tab ) {
 						<tbody>
 						<tr>
 							<th colspan="2">
-								<h3><span><?php esc_html_e( 'Overwrite the BuddyPress Edit Profile Form', 'buddyforms' ); ?></span></h3>
+								<h3><span><?php esc_html_e( 'Overwrite the BuddyPress Edit Profile Form', 'buddyforms-members' ); ?></span></h3>
 							</th>
 						</tr>
 						<tr valign="top">

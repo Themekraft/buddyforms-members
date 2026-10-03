@@ -1,5 +1,9 @@
 <?php
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 class BuddyForms_Members_Extention extends BP_Component {
 
 	public $id = 'buddyforms';
@@ -89,12 +93,12 @@ class BuddyForms_Members_Extention extends BP_Component {
 					}
 
 					if ( isset( $member_form['name'] ) ) {
-						$name = __( $member_form['name'], 'buddyforms-members' );
+						$name = $member_form['name'];
 					}
 
 					$singular_name = '';
 					if ( ! empty( $member_form['singular_name'] ) ) {
-						$singular_name = __( $member_form['singular_name'], 'buddyforms-members' );
+						$singular_name = $member_form['singular_name'];
 					}
 
 					$parent_tab = buddyforms_members_parent_tab( $member_form );
@@ -153,7 +157,7 @@ class BuddyForms_Members_Extention extends BP_Component {
 
 							$main_nav['default_subnav_slug'] = $key . '-create';
 							$sub_nav[]                       = array(
-								'name'            => sprintf( __( ' Contact with %s', 'buddyforms-members' ), bp_get_displayed_user_fullname() ),
+								'name'            => sprintf( /* translators: %s: displayed member's full name. */ __( ' Contact with %s', 'buddyforms-members' ), bp_get_displayed_user_fullname() ),
 								'slug'            => $key . '-create',
 								'parent_slug'     => $parent_tab,
 								'parent_url'      => trailingslashit( bp_displayed_user_domain() . $parent_tab ),
@@ -180,7 +184,7 @@ class BuddyForms_Members_Extention extends BP_Component {
 							$position ++;
 
 							$sub_nav[] = array(
-								'name'            => sprintf( __( ' Add %s', 'buddyforms-members' ), $singular_name ),
+								'name'            => sprintf( /* translators: %s: singular name of the form's post type. */ __( ' Add %s', 'buddyforms-members' ), $singular_name ),
 								'slug'            => $key . '-create',
 								'parent_slug'     => $parent_tab,
 								'parent_url'      => trailingslashit( bp_displayed_user_domain() . $parent_tab ),
@@ -193,7 +197,7 @@ class BuddyForms_Members_Extention extends BP_Component {
 							$position ++;
 
 							$sub_nav[] = array(
-								'name'            => sprintf( __( ' Edit %s', 'buddyforms-members' ), $singular_name ),
+								'name'            => sprintf( /* translators: %s: singular name of the form's post type. */ __( ' Edit %s', 'buddyforms-members' ), $singular_name ),
 								'slug'            => $key . '-edit',
 								'parent_slug'     => $parent_tab,
 								'parent_url'      => trailingslashit( bp_displayed_user_domain() . $parent_tab ),
@@ -206,7 +210,7 @@ class BuddyForms_Members_Extention extends BP_Component {
 							$position ++;
 
 							$sub_nav[] = array(
-								'name'            => sprintf( __( ' Revision %s', 'buddyforms-members' ), $singular_name ),
+								'name'            => sprintf( /* translators: %s: singular name of the form's post type. */ __( ' Revision %s', 'buddyforms-members' ), $singular_name ),
 								'slug'            => $key . '-revision',
 								'parent_slug'     => $parent_tab,
 								'parent_url'      => trailingslashit( bp_loggedin_user_domain() . $parent_tab ),
@@ -219,7 +223,7 @@ class BuddyForms_Members_Extention extends BP_Component {
 							$position ++;
 
 							$sub_nav[] = array(
-								'name'            => sprintf( __( ' Page %s', 'buddyforms-members' ), $singular_name ),
+								'name'            => sprintf( /* translators: %s: singular name of the form's post type. */ __( ' Page %s', 'buddyforms-members' ), $singular_name ),
 								'slug'            => $key . '-page',
 								'parent_slug'     => $parent_tab,
 								'parent_url'      => trailingslashit( bp_loggedin_user_domain() . $parent_tab ),
@@ -259,30 +263,40 @@ class BuddyForms_Members_Extention extends BP_Component {
 	 */
 	function get_user_posts_count( $user_id, $post_type, $form_slug ) {
 		global $buddyforms,$wpdb;
-		$meta_key = '_bf_form_slug';
-		$args = "
-			SELECT COUNT(*)
-			FROM $wpdb->posts p
-			WHERE p.post_author = %d
-			AND p.post_status NOT IN ('trash', 'auto-draft')
-			AND p.post_type = 'post'
-		";
 		if ( isset( $buddyforms[ $form_slug ]['list_posts_option'] ) && $buddyforms[ $form_slug ]['list_posts_option'] == 'list_all_form' ) {
-			$args_extended = $args . "
-				AND EXISTS (
-					SELECT 1
-					FROM $wpdb->postmeta pm
-					WHERE pm.post_id = p.ID
-					AND pm.meta_key = %s
-					AND pm.meta_value = %s
+			$count = $wpdb->get_var( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+				$wpdb->prepare(
+					"SELECT COUNT(*)
+					FROM {$wpdb->posts} p
+					WHERE p.post_author = %d
+					AND p.post_status NOT IN ('trash', 'auto-draft')
+					AND p.post_type = 'post'
+					AND EXISTS (
+						SELECT 1
+						FROM {$wpdb->postmeta} pm
+						WHERE pm.post_id = p.ID
+						AND pm.meta_key = %s
+						AND pm.meta_value = %s
+					)",
+					$user_id,
+					'_bf_form_slug',
+					$form_slug
 				)
-			";
-			$query = $wpdb->prepare( $args_extended, $user_id, $meta_key, $form_slug );
-		} else{
-			$query = $wpdb->prepare( $args, $user_id );
+			);
+		} else {
+			$count = $wpdb->get_var( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+				$wpdb->prepare(
+					"SELECT COUNT(*)
+					FROM {$wpdb->posts} p
+					WHERE p.post_author = %d
+					AND p.post_status NOT IN ('trash', 'auto-draft')
+					AND p.post_type = 'post'",
+					$user_id
+				)
+			);
 		}
 
-		return (int) $wpdb->get_var( $query );
+		return (int) $count;
 	}
 
 	/**
@@ -470,13 +484,30 @@ function buddyforms_members_activity_stream_support() {
 				$name_singular = isset( $buddyform['singular_name'] ) && ! empty( $buddyform['singular_name'] ) ? $buddyform['singular_name'] : $name;
 
 
-				$bp_activity_new_post = __( '%1$s posted a new <a href="%2$s">' . $name_singular . '</a>', 'buddyforms-members' );
+				// BuddyPress fills %1$s (user link) and %2$s (post URL) later with sprintf(), so the
+				// placeholders are passed through and literal % signs in the form name are escaped.
+				$name_singular_html = str_replace( '%', '%%', esc_html( $name_singular ) );
+
+				$bp_activity_new_post = sprintf(
+					/* translators: 1: user link placeholder, 2: post URL placeholder, 3: form singular name. */
+					__( '%1$s posted a new <a href="%2$s">%3$s</a>', 'buddyforms-members' ),
+					'%1$s',
+					'%2$s',
+					$name_singular_html
+				);
 				// if( isset( $buddyform['bp_activity_stream_content'] ) ){
 				// 	$bp_activity_new_post = $buddyform['bp_activity_stream_content'];
 				// 	$bp_activity_new_post = buddyforms_get_field_value_from_string( $bp_activity_new_post_ms, $post->ID, $form_slug );
 				// }
 
-				$bp_activity_new_post_ms = __( '%1$s posted a new <a href="%2$s">' . $name_singular . '</a>, on the site %3$s', 'buddyforms-members' );
+				$bp_activity_new_post_ms = sprintf(
+					/* translators: 1: user link placeholder, 2: post URL placeholder, 3: site link placeholder, 4: form singular name. */
+					__( '%1$s posted a new <a href="%2$s">%4$s</a>, on the site %3$s', 'buddyforms-members' ),
+					'%1$s',
+					'%2$s',
+					'%3$s',
+					$name_singular_html
+				);
 				// if( isset( $buddyform['bp_activity_stream_content'] ) ){
 				// 	$bp_activity_new_post_ms = $buddyform['bp_activity_stream_content'];
 				// 	$bp_activity_new_post_ms = buddyforms_get_field_value_from_string( $bp_activity_new_post_ms, $post->ID, $form_slug );
@@ -488,8 +519,9 @@ function buddyforms_members_activity_stream_support() {
 					array(
 						'component_id'             => 'activity',
 						'action_id'                => 'new_post_' . $buddyform['post_type'],
-						'bp_activity_admin_filter' => __( 'Published a new ' . $name_singular, 'buddyforms-members' ),
-						'bp_activity_front_filter' => __( $name_singular, 'buddyforms-members' ),
+						/* translators: %s: form singular name. */
+						'bp_activity_admin_filter' => sprintf( __( 'Published a new %s', 'buddyforms-members' ), $name_singular ),
+						'bp_activity_front_filter' => $name_singular,
 						'contexts'                 => array( 'activity', 'member' ),
 						'activity_comment'         => true,
 						'bp_activity_new_post'     => $bp_activity_new_post,
