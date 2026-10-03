@@ -93,12 +93,12 @@ class BuddyForms_Members_Extention extends BP_Component {
 					}
 
 					if ( isset( $member_form['name'] ) ) {
-						$name = __( $member_form['name'], 'buddyforms-members' );
+						$name = $member_form['name'];
 					}
 
 					$singular_name = '';
 					if ( ! empty( $member_form['singular_name'] ) ) {
-						$singular_name = __( $member_form['singular_name'], 'buddyforms-members' );
+						$singular_name = $member_form['singular_name'];
 					}
 
 					$parent_tab = buddyforms_members_parent_tab( $member_form );
@@ -474,13 +474,30 @@ function buddyforms_members_activity_stream_support() {
 				$name_singular = isset( $buddyform['singular_name'] ) && ! empty( $buddyform['singular_name'] ) ? $buddyform['singular_name'] : $name;
 
 
-				$bp_activity_new_post = __( '%1$s posted a new <a href="%2$s">' . $name_singular . '</a>', 'buddyforms-members' );
+				// BuddyPress fills %1$s (user link) and %2$s (post URL) later with sprintf(), so the
+				// placeholders are passed through and literal % signs in the form name are escaped.
+				$name_singular_html = str_replace( '%', '%%', esc_html( $name_singular ) );
+
+				$bp_activity_new_post = sprintf(
+					/* translators: 1: user link placeholder, 2: post URL placeholder, 3: form singular name. */
+					__( '%1$s posted a new <a href="%2$s">%3$s</a>', 'buddyforms-members' ),
+					'%1$s',
+					'%2$s',
+					$name_singular_html
+				);
 				// if( isset( $buddyform['bp_activity_stream_content'] ) ){
 				// 	$bp_activity_new_post = $buddyform['bp_activity_stream_content'];
 				// 	$bp_activity_new_post = buddyforms_get_field_value_from_string( $bp_activity_new_post_ms, $post->ID, $form_slug );
 				// }
 
-				$bp_activity_new_post_ms = __( '%1$s posted a new <a href="%2$s">' . $name_singular . '</a>, on the site %3$s', 'buddyforms-members' );
+				$bp_activity_new_post_ms = sprintf(
+					/* translators: 1: user link placeholder, 2: post URL placeholder, 3: site link placeholder, 4: form singular name. */
+					__( '%1$s posted a new <a href="%2$s">%4$s</a>, on the site %3$s', 'buddyforms-members' ),
+					'%1$s',
+					'%2$s',
+					'%3$s',
+					$name_singular_html
+				);
 				// if( isset( $buddyform['bp_activity_stream_content'] ) ){
 				// 	$bp_activity_new_post_ms = $buddyform['bp_activity_stream_content'];
 				// 	$bp_activity_new_post_ms = buddyforms_get_field_value_from_string( $bp_activity_new_post_ms, $post->ID, $form_slug );
@@ -492,8 +509,9 @@ function buddyforms_members_activity_stream_support() {
 					array(
 						'component_id'             => 'activity',
 						'action_id'                => 'new_post_' . $buddyform['post_type'],
-						'bp_activity_admin_filter' => __( 'Published a new ' . $name_singular, 'buddyforms-members' ),
-						'bp_activity_front_filter' => __( $name_singular, 'buddyforms-members' ),
+						/* translators: %s: form singular name. */
+						'bp_activity_admin_filter' => sprintf( __( 'Published a new %s', 'buddyforms-members' ), $name_singular ),
+						'bp_activity_front_filter' => $name_singular,
 						'contexts'                 => array( 'activity', 'member' ),
 						'activity_comment'         => true,
 						'bp_activity_new_post'     => $bp_activity_new_post,
