@@ -212,7 +212,7 @@ function buddyforms_members_after_save_post_redirect( $post_list_link ) {
 
 	$parent_tab = buddyforms_members_parent_tab( $buddyforms[ $form_slug ] );
 
-	$link_array = parse_url( $post_list_link );
+	$link_array = wp_parse_url( $post_list_link );
 	$path       = trim( $link_array['path'], '/' );
 	$action     = explode( '/', $path );
 

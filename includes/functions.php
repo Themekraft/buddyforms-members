@@ -1,5 +1,9 @@
 <?php
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 /**
  * Add the forms to the admin bar
  *
@@ -47,7 +51,7 @@ function buddyforms_members_wp_before_admin_bar_render() {
 						array(
 							'parent' => 'my-account-buddypress',
 							'id'     => 'my-account-buddypress-' . $key,
-							'title'  => __( $name, 'buddypress' ),
+							'title'  => esc_html( $name ),
 							'href'   => trailingslashit( bp_loggedin_user_domain() . $slug ),
 						)
 					);
@@ -152,7 +156,7 @@ function buddyforms_members_button_view_posts( $button, $args ) {
 		shortcode_atts(
 			array(
 				'form_slug' => '',
-				'label'     => 'View',
+				'label'     => __( 'View', 'buddyforms-members' ),
 			),
 			$args
 		)
@@ -160,7 +164,7 @@ function buddyforms_members_button_view_posts( $button, $args ) {
 
 	if ( isset( $buddyforms[ $form_slug ]['profiles_integration'] ) ) {
 		$url    = trailingslashit( bp_loggedin_user_domain() );
-		$button = '<a class="button" href="' . $url . $form_slug . '/">' . __( $label, 'buddyforms-members' ) . ' </a>';
+		$button = '<a class="button" href="' . esc_url( $url . $form_slug . '/' ) . '">' . esc_html( $label ) . ' </a>';
 	}
 
 	return $button;
@@ -174,7 +178,7 @@ function buddyforms_members_button_add_new( $button, $args ) {
 		shortcode_atts(
 			array(
 				'form_slug' => '',
-				'label'     => 'Add New',
+				'label'     => __( 'Add New', 'buddyforms-members' ),
 			),
 			$args
 		)
@@ -182,7 +186,7 @@ function buddyforms_members_button_add_new( $button, $args ) {
 
 	if ( isset( $buddyforms[ $form_slug ]['profiles_integration'] ) ) {
 		$url    = trailingslashit( bp_loggedin_user_domain() );
-		$button = '<a class="button" href="' . $url . $form_slug . '/create/">' . __( $label, 'buddyforms-members' ) . '</a>';
+		$button = '<a class="button" href="' . esc_url( $url . $form_slug . '/create/' ) . '">' . esc_html( $label ) . '</a>';
 	}
 
 	return $button;
@@ -230,7 +234,7 @@ function buddyforms_notification_send_mail_to_member_option( $mail_to_options, $
 		return $mail_to_options;
 	}
 
-	$mail_to_options['member'] = __( 'Member - send to displayed member', 'buddyforms' );
+	$mail_to_options['member'] = __( 'Member - send to displayed member', 'buddyforms-members' );
 
 	return $mail_to_options;
 }
@@ -263,7 +267,7 @@ function buddyforms_check_send_message_to_member_conditions() {
 	}
 
 	if ( ! in_array( 'member', $mail_to ) ) {
-		$messages[] = __( 'At least one Mail Notification must have selected Send mail to Member.', 'buddyforms' );
+		$messages[] = __( 'At least one Mail Notification must have selected Send mail to Member.', 'buddyforms-members' );
 	}
 
 	if ( ! empty( $messages ) ) {
@@ -302,4 +306,27 @@ function buddyforms_enable_at_least_one_send_to_member_in_notifications( $buddyf
 	}
 
 	return $buddyform;
+}
+
+add_filter( 'bp_is_current_component', 'buddyforms_profile_user_id_test', 10, 2 );
+function buddyforms_profile_user_id_test( $is_current_component, $component ){
+	if( isset( $_POST['bf_submitted'] ) && $component === 'profile' ){
+		return true;
+	}
+	return $is_current_component;
+}
+
+add_filter( 'buddyforms_the_author_id', 'buddyforms_get_profile_form_author_id' );
+function buddyforms_get_profile_form_author_id( $the_author_id ){
+	global $buddyforms;
+	if( bp_is_user_profile() ){
+		if( isset( $_POST['form_slug'] ) && 'post' == $buddyforms[$_POST['form_slug']]['form_type'] ){
+			if( $the_author_id == 0 ){
+				$the_author_id = bp_displayed_user_id();
+			}
+		}
+	}
+
+	return $the_author_id;
+
 }

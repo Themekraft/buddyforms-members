@@ -1,4 +1,8 @@
 <?php
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 function buddyforms_members_admin_settings_sidebar_metabox() {
 	add_meta_box( 'buddyforms_members', __( 'BP Member Profiles', 'buddyforms-members' ), 'buddyforms_members_admin_settings_sidebar_metabox_html', 'buddyforms', 'normal', 'low' );
 	add_filter( 'postbox_classes_buddyforms_buddyforms_members', 'buddyforms_metabox_class' );
@@ -48,6 +52,11 @@ function buddyforms_members_admin_settings_sidebar_metabox_html() {
 		$bp_activity_stream_content = $buddyform['bp_activity_stream_content'];
 	}
 
+	$bp_guest_post_submission = '';
+	if ( isset( $buddyform['bp_profile_guest_post'] ) ) {
+		$bp_guest_post_submission = $buddyform['bp_profile_guest_post'];
+	}
+
 	$bp_profile_member_message = false;
 	if ( isset( $buddyform['bp_profile_member_message'] ) ) {
 		$bp_profile_member_message = $buddyform['bp_profile_member_message'];
@@ -79,7 +88,7 @@ function buddyforms_members_admin_settings_sidebar_metabox_html() {
 			array( 'bp_profile_member_message' => 'Integrate this form as a member contact form' ),
 			array(
 				'value'     => $bp_profile_member_message,
-				'shortDesc' => __( 'Visibility: This tab is only visible in other user profiles. You will not see it in your profile. It is visible to your profile visitors only. A new send to option is added to the notifications. Please make sure you have at least one notification send to the member.' ),
+				'shortDesc' => __( 'Visibility: This tab is only visible in other user profiles. You will not see it in your profile. It is visible to your profile visitors only. A new send to option is added to the notifications. Please make sure you have at least one notification send to the member.', 'buddyforms-members' ),
 			)
 		);
 	}
@@ -101,7 +110,7 @@ function buddyforms_members_admin_settings_sidebar_metabox_html() {
 
 	if( $bp_activity_stream == true ){
 		$form_setup[] = new Element_Textbox(
-			'<b>' . __( 'Activity Stream action message', 'buddyforms' ) . '</b>',
+			'<b>' . __( 'Activity Stream action message', 'buddyforms-members' ) . '</b>',
 			'buddyforms_options[bp_activity_stream_title]',
 			array(
 				'rows'  => 3,
@@ -114,7 +123,7 @@ function buddyforms_members_admin_settings_sidebar_metabox_html() {
 	}
 	if( $bp_activity_stream == true ){
 		$form_setup[] = new Element_Textarea(
-			'<b>' . __( 'Activity Stream custom message', 'buddyforms' ) . '</b>',
+			'<b>' . __( 'Activity Stream custom message', 'buddyforms-members' ) . '</b>',
 			'buddyforms_options[bp_activity_stream_content]',
 			array(
 				'rows'  => 3,
@@ -138,6 +147,16 @@ function buddyforms_members_admin_settings_sidebar_metabox_html() {
 		array(
 			'value'     => $profile_visibility,
 			'shortDesc' => __( 'Who can see submissions in Profiles?', 'buddyforms-members' ),
+		)
+	);
+
+	$form_setup[] = new Element_Checkbox(
+		'<br><b>' . __( 'Enable Post Access for Profile Visitors', 'buddyforms-members' ) . '</b>',
+		'buddyforms_options[bp_profile_guest_post]',
+		array( 'enabled_guest_post' => 'Enable guest post' ),
+		array(
+			'value'     => $bp_guest_post_submission,
+			'shortDesc' => __( 'By default, the create tab is only visible for logged-in users if they visit their own profile. With this option, you can enable the Create tab for other users. The tab will work based on the permission set in the form Permission. The new post will be assigned to the displayed users and can be found in his profile.', 'buddyforms-members' ),
 		)
 	);
 
@@ -337,15 +356,17 @@ endif;
 
 				// Let's add an script to handled the update of xprofile field selector
 
-				$script = "<script>
+				$js_field_id = esc_js( $field_id );
+
+				$script = "
 					jQuery(function() {
-						const \$xprofile_group = jQuery('[name=\'buddyforms_options[form_fields][" . $field_id . "][xprofile_group]\']');
+						const \$xprofile_group = jQuery('[name=\'buddyforms_options[form_fields][" . $js_field_id . "][xprofile_group]\']');
 
 						const ajaxReq = function(){
 
 							debugger;
 
-							const \$xprofile_field = jQuery('[name=\'buddyforms_options[form_fields][" . $field_id . "][xprofile_field]\']');
+							const \$xprofile_field = jQuery('[name=\'buddyforms_options[form_fields][" . $js_field_id . "][xprofile_field]\']');
 							const selected_group_id = \$xprofile_group.val();
 
 							// Let's disabled the event & input
@@ -401,9 +422,9 @@ endif;
 						\$xprofile_group.off('change').change(ajaxReq);
 
 					});
-				</script>";
+				";
 
-				$form_fields['general']['xprofile_field_script'] = new Element_HTML( $script );
+				wp_print_inline_script_tag( $script );
 
 			} else {
 				$form_fields['general']['notice'] = new Element_HTML( __( 'You need to enable BuddyPress Groups to use this form element', 'buddyforms-members' ) );
@@ -438,7 +459,7 @@ endif;
 				array(
 					'data'      => $field_id,
 					'value'     => $placeholder,
-					'shortDesc' => __( 'You can change the placeholder to something meaningful like Select a Category or what make sense for your taxonomy.' ),
+					'shortDesc' => __( 'You can change the placeholder to something meaningful like Select a Category or what make sense for your taxonomy.', 'buddyforms-members' ),
 				)
 			);
 
@@ -460,7 +481,7 @@ endif;
 				array(
 					'data'      => $field_id,
 					'value'     => $tmaximumSelectionLength,
-					'shortDesc' => __( 'Add a number to limit the Selection amount' ),
+					'shortDesc' => __( 'Add a number to limit the Selection amount', 'buddyforms-members' ),
 				)
 			);
 
@@ -904,7 +925,7 @@ function buddyforms_members_edit_field_html( $form_slug, $field ) {
 
 		if ( strpos( $label, '(required)' ) !== false ) {
 			$tmp   = str_replace( '<input', '<input required "', $tmp );
-			$label = str_replace( '(required)', '', strip_tags( $label ) );
+			$label = str_replace( '(required)', '', wp_strip_all_tags( $label ) );
 			$label = '* ' . $label;
 		}
 		$tmp = str_replace( '<input', '<input placeholder="' . $label . '"', $tmp );
@@ -971,7 +992,7 @@ function buddyforms_members_process_submission_end( $args ) {
 					switch ( $xfield->type ) {
 
 						case 'datebox':
-							$date = isset( $_POST[ $field['slug'] ] ) ? date( 'Y-m-d H:i:s', strtotime( sanitize_text_field( wp_unslash( $_POST[ $field['slug'] ] ) ) ) ) : '';
+							$date = isset( $_POST[ $field['slug'] ] ) ? gmdate( 'Y-m-d H:i:s', strtotime( sanitize_text_field( wp_unslash( $_POST[ $field['slug'] ] ) ) ) ) : '';
 							if ( ! empty( $date ) ) {
 								xprofile_set_field_data( $field['mapped_xprofile_field'], $user_id, $date );
 							}
