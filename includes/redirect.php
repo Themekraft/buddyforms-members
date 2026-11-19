@@ -195,6 +195,7 @@ add_filter( 'get_pagenum_link', 'bf_members_page_link_router_pagination', 10, 2 
 
 add_filter( 'buddyforms_after_save_post_redirect', 'buddyforms_members_after_save_post_redirect', 10, 1 );
 function buddyforms_members_after_save_post_redirect( $post_list_link ) {
+	// phpcs:disable WordPress.Security.NonceVerification.Missing -- read-only: only picks the redirect URL after buddyforms_process_submission() handled the nonce-checked submission.
 	global $buddyforms, $bp;
 
 	if ( ! isset( $_POST['form_slug'] ) ) {
@@ -238,6 +239,7 @@ function buddyforms_members_after_save_post_redirect( $post_list_link ) {
 	}
 
 	return $post_list_link;
+	// phpcs:enable WordPress.Security.NonceVerification.Missing
 }
 
 add_filter( 'buddyforms_login_form_redirect_url', 'buddyforms_members_login_form_redirect_url', 10, 1 );

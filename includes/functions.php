@@ -310,17 +310,20 @@ function buddyforms_enable_at_least_one_send_to_member_in_notifications( $buddyf
 
 add_filter( 'bp_is_current_component', 'buddyforms_profile_user_id_test', 10, 2 );
 function buddyforms_profile_user_id_test( $is_current_component, $component ){
+	// phpcs:disable WordPress.Security.NonceVerification.Missing -- read-only submitted flag, only tells BuddyPress the profile component is current.
 	if( isset( $_POST['bf_submitted'] ) && $component === 'profile' ){
 		return true;
 	}
 	return $is_current_component;
+	// phpcs:enable WordPress.Security.NonceVerification.Missing
 }
 
 add_filter( 'buddyforms_the_author_id', 'buddyforms_get_profile_form_author_id' );
 function buddyforms_get_profile_form_author_id( $the_author_id ){
+	// phpcs:disable WordPress.Security.NonceVerification.Missing -- only adjusts the author ID BuddyForms computes; the write path (buddyforms_process_submission()) verifies the nonce first.
 	global $buddyforms;
 	if( bp_is_user_profile() ){
-		if( isset( $_POST['form_slug'] ) && 'post' == $buddyforms[$_POST['form_slug']]['form_type'] ){
+		if( isset( $_POST['form_slug'] ) && 'post' == $buddyforms[ sanitize_text_field( wp_unslash( $_POST['form_slug'] ) ) ]['form_type'] ){
 			if( $the_author_id == 0 ){
 				$the_author_id = bp_displayed_user_id();
 			}
@@ -329,4 +332,5 @@ function buddyforms_get_profile_form_author_id( $the_author_id ){
 
 	return $the_author_id;
 
+	// phpcs:enable WordPress.Security.NonceVerification.Missing
 }

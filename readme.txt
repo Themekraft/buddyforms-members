@@ -8,7 +8,7 @@ Stable tag: 1.5.10
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Create custom Member Profile Tabs and Registration Forms in BuddyPress and BuddyBoss. Allow your Members to create, edit, and delete any kind of data directly from their BuddyPress Member Profile!
+Create custom Member Profile Tabs and Registration Forms in BuddyPress and BuddyBoss. Members create, edit and delete their data from their profile.
 
 == Description ==
 
