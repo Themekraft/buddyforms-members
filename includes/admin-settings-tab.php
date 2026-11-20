@@ -26,7 +26,7 @@ function buddyforms_buddypress_settings_page_tab( $tab ) {
 		}
 	}
 
-	$buddypress_settings = get_option( 'buddyforms_buddypress_settings' );
+	$buddypress_settings = (array) get_option( 'buddyforms_buddypress_settings', array() );
 
 	?>
 
@@ -53,10 +53,10 @@ function buddyforms_buddypress_settings_page_tab( $tab ) {
 								<?php
 								if ( isset( $buddyforms ) && is_array( $buddyforms ) ) {
 									echo '<select name="buddyforms_buddypress_settings[none]" id="buddyforms_registration_form_none">';
-										echo '<option ' . selected( $buddypress_settings['none'], 'none' ) . '  value="none">' . esc_html__( 'BuddyPress Default', 'buddyforms-members' ) . '</option>';
+										echo '<option ' . selected( isset( $buddypress_settings['none'] ) ? $buddypress_settings['none'] : '', 'none' ) . '  value="none">' . esc_html__( 'BuddyPress Default', 'buddyforms-members' ) . '</option>';
 									foreach ( $buddyforms as $form_slug => $form ) {
 										if ( $form['form_type'] == 'registration' ) {
-											echo '<option ' . selected( $buddypress_settings['none'], $form['slug'] ) . ' value="' . esc_attr( $form['slug'] ) . '">' . esc_html( $form['name'] ) . '</option>';
+											echo '<option ' . selected( isset( $buddypress_settings['none'] ) ? $buddypress_settings['none'] : '', $form['slug'] ) . ' value="' . esc_attr( $form['slug'] ) . '">' . esc_html( $form['name'] ) . '</option>';
 										}
 									}
 									echo '</select>';
@@ -77,7 +77,7 @@ function buddyforms_buddypress_settings_page_tab( $tab ) {
 										echo '<option value="none">' . esc_html__( 'BuddyPress Default', 'buddyforms-members' ) . '</option>';
 										foreach ( $buddyforms as $form_slug => $form ) {
 											if ( $form['form_type'] == 'registration' ) {
-												echo '<option ' . selected( $buddypress_settings[ $key ], $form['slug'] ) . 'value="' . esc_attr( $form['slug'] ) . '">' . esc_html( $form['name'] ) . '</option>';
+												echo '<option ' . selected( isset( $buddypress_settings[ $key ] ) ? $buddypress_settings[ $key ] : '', $form['slug'] ) . 'value="' . esc_attr( $form['slug'] ) . '">' . esc_html( $form['name'] ) . '</option>';
 											}
 										}
 										echo '</select>';
