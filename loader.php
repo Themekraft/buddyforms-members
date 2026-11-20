@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Plugin Name: BuddyForms Members
  * Plugin URI: http://buddyforms.com/downloads/buddyforms-members/
  * Description: The BuddyForms Members Component. Let your members write right out of their profiles.
- * Version: 1.5.10
+ * Version: 1.5.11
  * Requires at least: 5.9
  * Requires PHP: 7.4
  * Requires Plugins: buddyforms
@@ -76,13 +76,9 @@ function buddyforms_members_fs() {
 	global $buddyforms_members_fs;
 
 	if ( ! isset( $buddyforms_members_fs ) ) {
-		// Include Freemius SDK.
-		if ( file_exists( dirname( dirname( __FILE__ ) ) . '/buddyforms/includes/resources/freemius/start.php' ) ) {
-			// Try to load SDK from parent plugin folder.
-			require_once dirname( dirname( __FILE__ ) ) . '/buddyforms/includes/resources/freemius/start.php';
-		} elseif ( file_exists( dirname( dirname( __FILE__ ) ) . '/buddyforms-premium/includes/resources/freemius/start.php' ) ) {
-			// Try to load SDK from premium parent plugin folder.
-			require_once dirname( dirname( __FILE__ ) ) . '/buddyforms-premium/includes/resources/freemius/start.php';
+		// The Freemius SDK comes with BuddyForms, which loads it before this add-on initializes.
+		if ( ! function_exists( 'fs_dynamic_init' ) ) {
+			return false;
 		}
 
 		try {
