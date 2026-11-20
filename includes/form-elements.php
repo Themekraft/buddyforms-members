@@ -1050,8 +1050,17 @@ function buddyforms_members_process_submission_end( $args ) {
 					xprofile_set_field_data( $field['mapped_xprofile_field'], $user_id, $the_new_options );
 				}
 
-				if ( $field['type'] == 'bp_member_type' ) {
-					bp_set_member_type( $user_id, sanitize_text_field( wp_unslash( $_POST[ $field['slug'] ] ) ) );
+				if ( $field['type'] == 'bp_member_type' && isset( $_POST[ $field['slug'] ] ) && is_string( $_POST[ $field['slug'] ] ) ) {
+					$member_type = sanitize_text_field( wp_unslash( $_POST[ $field['slug'] ] ) );
+					// Only the member types the field offers: its default when hidden, else the ones it lets users pick.
+					if ( isset( $field['member_type_hidden'] ) ) {
+						$allowed_member_types = ! empty( $field['member_type_default'] ) ? array( $field['member_type_default'] ) : array();
+					} else {
+						$allowed_member_types = ! empty( $field['member_types'] ) ? array_values( (array) $field['member_types'] ) : array();
+					}
+					if ( in_array( $member_type, $allowed_member_types, true ) ) {
+						bp_set_member_type( $user_id, $member_type );
+					}
 				}
 
 				if ( $field['type'] == 'xprofile_group' ) {
