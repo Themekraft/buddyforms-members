@@ -658,7 +658,8 @@ endif;
 
 			break;
 		case 'member_taxonomy':
-			if ( ! isset( $customfield['member_taxonomy'] ) ) {
+			// Without a taxonomy (the "Registration Profile" template ships with "none") there is nothing to list.
+			if ( empty( $customfield['member_taxonomy'] ) || ! taxonomy_exists( $customfield['member_taxonomy'] ) ) {
 				break;
 			}
 
