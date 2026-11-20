@@ -541,7 +541,7 @@ function buddyforms_members_activity_stream_support() {
 add_action( 'init', 'buddyforms_members_activity_stream_support', 999 );
 
 // Add Support for BuddyPress Activity Stream in Contact Forms
-function contact_forms_activity_update_buddyforms_after_submission_end($args){
+function buddyforms_members_contact_forms_activity_update($args){
 	global $buddyforms;
 
 	// Check if the Activity component is active before using it.
@@ -566,7 +566,9 @@ function contact_forms_activity_update_buddyforms_after_submission_end($args){
 	// get the message frompost meta
 	$message = get_post_meta($args['post_id'], 'message', true);
 	// Allow other plugins to change the message
-	$message = apply_filters('bf_bp_activity_stream_message', $message, $args);
+	// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- deprecated hook name, kept for backward compatibility until a future major release.
+	$message = apply_filters_deprecated( 'bf_bp_activity_stream_message', array( $message, $args ), '1.5.12', 'buddyforms_members_activity_stream_message' );
+	$message = apply_filters( 'buddyforms_members_activity_stream_message', $message, $args );
 
 	if( empty($message) ){
 		return;
@@ -594,10 +596,10 @@ function contact_forms_activity_update_buddyforms_after_submission_end($args){
 	update_post_meta( $args['post_id'], 'bf_bp_activity_id', $activity_id );
 
 }
-add_action('buddyforms_after_submission_end', 'contact_forms_activity_update_buddyforms_after_submission_end');
+add_action('buddyforms_after_submission_end', 'buddyforms_members_contact_forms_activity_update');
 
 
-function bf_bp_activity_create_summary( $summary, $content, $activity, $extracted_media ){
+function buddyforms_members_activity_create_summary( $summary, $content, $activity, $extracted_media ){
 	global $buddyforms;
 
 	if( ! isset( $activity['secondary_item_id'] ) ){
@@ -619,9 +621,9 @@ function bf_bp_activity_create_summary( $summary, $content, $activity, $extracte
 	return $summary;
 
 }
-add_filter('bp_activity_create_summary', 'bf_bp_activity_create_summary', 10, 4);
+add_filter('bp_activity_create_summary', 'buddyforms_members_activity_create_summary', 10, 4);
 
-function bf_bp_activity_custom_post_type_post_action( $action, $activity ){
+function buddyforms_members_activity_custom_post_type_post_action( $action, $activity ){
 	global $buddyforms;
 
 	if( ! isset( $activity->secondary_item_id ) ){
@@ -644,9 +646,9 @@ function bf_bp_activity_custom_post_type_post_action( $action, $activity ){
 
 	return $action;
 }
-add_filter('bp_activity_custom_post_type_post_action', 'bf_bp_activity_custom_post_type_post_action', 10, 2);
+add_filter('bp_activity_custom_post_type_post_action', 'buddyforms_members_activity_custom_post_type_post_action', 10, 2);
 
-function bf_bp_activity_new_update_action( $action, $activity ){
+function buddyforms_members_activity_new_update_action( $action, $activity ){
 
 	global $buddyforms;
 
@@ -680,4 +682,4 @@ function bf_bp_activity_new_update_action( $action, $activity ){
 
 	return $action;
 }
-add_filter('bp_activity_new_update_action', 'bf_bp_activity_new_update_action', 10, 2);
+add_filter('bp_activity_new_update_action', 'buddyforms_members_activity_new_update_action', 10, 2);
