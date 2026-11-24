@@ -658,7 +658,8 @@ endif;
 
 			break;
 		case 'member_taxonomy':
-			if ( ! isset( $customfield['member_taxonomy'] ) ) {
+			// Without a taxonomy (the "Registration Profile" template ships with "none") there is nothing to list.
+			if ( empty( $customfield['member_taxonomy'] ) || ! taxonomy_exists( $customfield['member_taxonomy'] ) ) {
 				break;
 			}
 
@@ -1013,7 +1014,7 @@ function buddyforms_members_process_submission_end( $args ) {
 					}
 				}
 
-				if ( $field['type'] == 'member_taxonomy' ) {
+				if ( $field['type'] == 'member_taxonomy' && ! empty( $field['mapped_xprofile_field'] ) ) {
 					$options = isset( $_POST[ $field['mapped_xprofile_field'] ] ) ? map_deep( $_POST[ $field['mapped_xprofile_field'] ], 'sanitize_text_field' ) : '';
 					$xfield   = new BP_XProfile_Field( $field['mapped_xprofile_field'] );
 					$children = $xfield->get_children();
