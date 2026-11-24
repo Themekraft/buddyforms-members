@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @package BuddyForms
  * @since 0.3 beta
  */
-function bf_members_get_redirect_link( $id = false ) {
+function buddyforms_members_get_redirect_link( $id = false ) {
 	global $bp, $buddyforms;
 
 	if ( ! $id ) {
@@ -82,7 +82,25 @@ function bf_members_get_redirect_link( $id = false ) {
 		}
 	}
 
-	return apply_filters( 'bf_members_get_redirect_link', $link );
+	// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- deprecated hook name, kept for backward compatibility until a future major release.
+	$link = apply_filters_deprecated( 'bf_members_get_redirect_link', array( $link ), '1.5.12', 'buddyforms_members_get_redirect_link' );
+
+	return apply_filters( 'buddyforms_members_get_redirect_link', $link );
+}
+
+/**
+ * Get the redirect link.
+ *
+ * @deprecated 1.5.12 Use buddyforms_members_get_redirect_link() instead.
+ *
+ * @param int|false $id Page ID.
+ * @return string|false
+ */
+// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- deprecated alias of the prefixed function, kept for backward compatibility until a future major release.
+function bf_members_get_redirect_link( $id = false ) {
+	_deprecated_function( __FUNCTION__, '1.5.12', 'buddyforms_members_get_redirect_link()' );
+
+	return buddyforms_members_get_redirect_link( $id );
 }
 
 /**
@@ -91,14 +109,14 @@ function bf_members_get_redirect_link( $id = false ) {
  * @package BuddyForms
  * @since 0.3 beta
  */
-function bf_members_redirect_to_profile() {
+function buddyforms_members_redirect_to_profile() {
 	global $post;
 
 	if ( ! isset( $post->ID ) || ! is_user_logged_in() ) {
 		return false;
 	}
 
-	$link = bf_members_get_redirect_link( $post->ID );
+	$link = buddyforms_members_get_redirect_link( $post->ID );
 
 	if ( ! empty( $link ) ) :
 		wp_safe_redirect( $link );
@@ -106,7 +124,7 @@ function bf_members_redirect_to_profile() {
 	endif;
 }
 
-add_action( 'template_redirect', 'bf_members_redirect_to_profile' );
+add_action( 'template_redirect', 'buddyforms_members_redirect_to_profile' );
 
 /**
  * Link router function
@@ -117,7 +135,7 @@ add_action( 'template_redirect', 'bf_members_redirect_to_profile' );
  * @uses    is_page()
  * @uses    bp_loggedin_user_domain()
  */
-function bf_members_page_link_router( $link, $id ) {
+function buddyforms_members_page_link_router( $link, $id ) {
 	if ( ! is_user_logged_in() || is_admin() ) {
 		return $link;
 	}
@@ -127,19 +145,22 @@ function bf_members_page_link_router( $link, $id ) {
 	$form_slug = get_post_meta( $id, '_bf_form_slug', true );
 
 	if ( isset( $buddyforms[ $form_slug ]['profiles_integration'] ) ) {
-		$new_link = bf_members_get_redirect_link( $id );
+		$new_link = buddyforms_members_get_redirect_link( $id );
 	}
 
 	if ( ! empty( $new_link ) ) {
 		$link = $new_link;
 	}
 
-	return apply_filters( 'bf_members_router_link', $link );
+	// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- deprecated hook name, kept for backward compatibility until a future major release.
+	$link = apply_filters_deprecated( 'bf_members_router_link', array( $link ), '1.5.12', 'buddyforms_members_router_link' );
+
+	return apply_filters( 'buddyforms_members_router_link', $link );
 }
 
-add_filter( 'page_link', 'bf_members_page_link_router', 10, 2 );
+add_filter( 'page_link', 'buddyforms_members_page_link_router', 10, 2 );
 
-function bf_members_page_link_router_edit( $link, $id ) {
+function buddyforms_members_page_link_router_edit( $link, $id ) {
 	global $buddyforms;
 
 	$form_slug = get_post_meta( $id, '_bf_form_slug', true );
@@ -166,9 +187,9 @@ function bf_members_page_link_router_edit( $link, $id ) {
 	return '<a title="' . __( 'Edit', 'buddyforms-members' ) . '" id="' . $id . '" class="bf_edit_post" href="' . $domain . $parent_tab . '/' . $form_slug . '-edit/' . $id . '"><span aria-label="' . __( 'Edit', 'buddyforms-members' ) . '" class="dashicons dashicons-edit"></span></a>';
 }
 
-add_filter( 'buddyforms_loop_edit_post_link', 'bf_members_page_link_router_edit', 30, 2 );
+add_filter( 'buddyforms_loop_edit_post_link', 'buddyforms_members_page_link_router_edit', 30, 2 );
 
-function bf_members_page_link_router_pagination( $result ) {
+function buddyforms_members_page_link_router_pagination( $result ) {
 	global $bp, $buddyforms_member_tabs;
 
 	if ( is_admin() ) {
@@ -190,7 +211,7 @@ function bf_members_page_link_router_pagination( $result ) {
 
 }
 
-add_filter( 'get_pagenum_link', 'bf_members_page_link_router_pagination', 10, 2 );
+add_filter( 'get_pagenum_link', 'buddyforms_members_page_link_router_pagination', 10, 2 );
 
 
 add_filter( 'buddyforms_after_save_post_redirect', 'buddyforms_members_after_save_post_redirect', 10, 1 );
